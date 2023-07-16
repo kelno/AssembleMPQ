@@ -393,9 +393,9 @@ if (NOT STORM_SKIP_INSTALL)
 endif()
 
 if(STORM_BUILD_TESTS)
-    add_executable(StormLib_test ${TEST_SRC_FILES})
-    target_link_libraries(StormLib_test ${LIBRARY_NAME})
-    install(TARGETS StormLib_test RUNTIME DESTINATION bin)
-    target_compile_features(StormLib_test PRIVATE cxx_std_20)
+    add_executable(AssembleMPQ ${TEST_SRC_FILES})
+    target_link_libraries(AssembleMPQ ${LIBRARY_NAME})
+    install(TARGETS AssembleMPQ RUNTIME DESTINATION bin)
+    target_compile_features(AssembleMPQ PRIVATE cxx_std_20)
 endif()
 

@@ -150,8 +150,13 @@ int main(int argc, char* argv[])
     else
         return 1;
 
-    // V4 seems to be supported by wow 335. We made a fix in SFileCreateArchive to actually remove MPQ_CREATE_LISTFILE 
-    auto createFlags = MPQ_CREATE_ARCHIVE_V4 /*| MPQ_CREATE_LISTFILE | MPQ_CREATE_ATTRIBUTES*/; 
+    static bool BUILD_LIST_FILE = false; // We made a fix in SFileCreateArchive to actually remove MPQ_CREATE_LISTFILE 
+
+    // V4 seems to be supported by wow 335. 
+    auto createFlags = MPQ_CREATE_ARCHIVE_V4; 
+    if (BUILD_LIST_FILE)
+        createFlags |= (MPQ_CREATE_LISTFILE | MPQ_CREATE_ATTRIBUTES);
+
     auto mpqFullPath = GetMpqPath();
     TLogHelper logger("Assemble", mpqFullPath.c_str());
     HANDLE hMpq = NULL;
