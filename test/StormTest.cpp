@@ -124,7 +124,8 @@ auto GetMpqPath()
 auto GetFileList(std::string_view directoryPath)
 {
     std::vector<std::pair<std::string /*realPath*/, std::string /*internalPath*/>> files;
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath)) {
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))  // TODO: Crashes if given wrong dir?
+    {
         if (entry.is_regular_file())
         {
             auto actualPath = entry.path().string();
