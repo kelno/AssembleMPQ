@@ -14,7 +14,6 @@
 #include <fstream>
 #include <vector>
 #include <codecvt>
-#include "Windows.h"
 
 #define _CRT_NON_CONFORMING_SWPRINTFS
 #define _CRT_SECURE_NO_DEPRECATE
@@ -115,10 +114,13 @@ auto GetMpqPath()
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::string currentDirectory = currentPath.string() + R"(\)" + mpqFileName;
 
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    std::wstring wide = converter.from_bytes(currentDirectory);
-
-    return wide;
+    if constexpr (!std::is_same_v<TCHAR, char>) {
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+        std::wstring wide = converter.from_bytes(currentDirectory);
+        return wide;
+    }
+    else
+        return currentDirectory;
 }
 
 auto GetFileList(std::string_view directoryPath)
