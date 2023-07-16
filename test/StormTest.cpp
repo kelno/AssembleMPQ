@@ -112,7 +112,7 @@ auto GetMpqPath()
     DeleteMPQFile(mpqFileName);
 
     std::filesystem::path currentPath = std::filesystem::current_path();
-    std::string currentDirectory = currentPath.string() + R"(\)" + mpqFileName;
+    std::string currentDirectory = currentPath.string() + '/' + mpqFileName;
 
     if constexpr (!std::is_same_v<TCHAR, char>) {
         std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
@@ -132,7 +132,7 @@ auto GetFileList(std::string_view directoryPath)
         {
             auto actualPath = entry.path().string();
             auto internalPath = actualPath.substr(directoryPath.length()); // Exclude directoryPath from the file path
-            if (!internalPath.empty() && internalPath[0] == '\\')
+            if (!internalPath.empty() && (internalPath[0] == '/' || internalPath[0] == '\\'))
                 internalPath.erase(0, 1); // Remove the first character
 
             files.emplace_back(std::make_pair(actualPath, internalPath));
