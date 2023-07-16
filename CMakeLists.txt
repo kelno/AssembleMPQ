@@ -396,5 +396,6 @@ if(STORM_BUILD_TESTS)
     add_executable(StormLib_test ${TEST_SRC_FILES})
     target_link_libraries(StormLib_test ${LIBRARY_NAME})
     install(TARGETS StormLib_test RUNTIME DESTINATION bin)
+    target_compile_features(StormLib_test PRIVATE cxx_std_20)
 endif()
 
