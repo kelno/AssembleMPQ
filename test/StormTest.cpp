@@ -49,20 +49,17 @@ std::streampos GetFileSize(std::ifstream& inputFile)
     return fileSize;
 }
 
-void DeleteMPQFile(auto filePath)
+void DeleteMPQFileIfExists(auto filePath)
 {
     if (std::filesystem::exists(filePath)) {
         try {
             std::filesystem::remove(filePath);
-            std::cout << "File deleted successfully." << std::endl;
+            std::cout << "Deleted existing MPQ " << filePath << std::endl;
         }
         catch (const std::filesystem::filesystem_error& ex) {
             std::cout << "An error occurred: " << ex.what() << std::endl;
             exit(0);
         }
-    }
-    else {
-        //std::cout << "File does not exist." << std::endl;
     }
 }
 
@@ -109,7 +106,7 @@ void AddFileToMPQ(auto hMpq, auto& logger, const char* filePath, const char* int
 auto GetMpqPath()
 {
     auto mpqFileName = "test.MPQ";
-    DeleteMPQFile(mpqFileName);
+    DeleteMPQFileIfExists(mpqFileName);
 
     std::filesystem::path currentPath = std::filesystem::current_path();
     std::string currentDirectory = currentPath.string() + '/' + mpqFileName;
