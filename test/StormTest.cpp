@@ -105,7 +105,7 @@ void AddFileToMPQ(auto hMpq, auto& logger, const char* filePath, const char* int
 
 auto GetMpqPath()
 {
-    auto mpqFileName = "test.MPQ";
+    auto mpqFileName = "Patch-X.MPQ";
     DeleteMPQFileIfExists(mpqFileName);
 
     std::filesystem::path currentPath = std::filesystem::current_path();
