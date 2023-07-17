@@ -63,17 +63,38 @@ void DeleteMPQFileIfExists(auto filePath)
     }
 }
 
-void AddFileToMPQ(auto hMpq, auto& logger, const char* filePath, const char* internalPath, bool patch = true)
+auto GetCompressionFlags(std::filesystem::path const& filePath)
+{
+    auto writeFileFlags = 0;
+
+    auto extension = filePath.extension().string();
+    // Convert the extension to lowercase
+    std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) {
+        return std::tolower(c);
+    });
+
+    if (extension == ".wav")
+        writeFileFlags = MPQ_COMPRESSION_HUFFMANN;
+    else if (extension == ".mp3" || extension == ".mpq")
+        writeFileFlags = 0; // no compression
+    else
+        writeFileFlags = MPQ_COMPRESSION_ZLIB;
+
+
+    return writeFileFlags;
+}
+
+void AddFileToMPQ(auto hMpq, auto& logger, std::filesystem::path const& filePath, std::filesystem::path const& internalPath, bool patch = true)
 {
     std::string progressString("Adding file ");
-    progressString += internalPath;
+    progressString += internalPath.string();
     logger.PrintMessage(progressString.c_str());
 
     std::ifstream inputFile(filePath, std::ios::binary);
 
     if (!inputFile.is_open())
     {
-        auto error = std::string("Failed to open file ") + filePath;
+        auto error = std::string("Failed to open file ") + filePath.string();
         logger.PrintError(error.c_str());
         exit(0);
     }
@@ -84,10 +105,10 @@ void AddFileToMPQ(auto hMpq, auto& logger, const char* filePath, const char* int
     if (patch)
         createFileFlags |= MPQ_FILE_PATCH_FILE;
 
-    auto writeFileFlags = MPQ_COMPRESSION_ZLIB;
-    HANDLE hFile = NULL;
+    auto writeFileFlags = GetCompressionFlags(internalPath);
 
-    if (!SFileCreateFile(hMpq, internalPath, 0, fileSize, 0, createFileFlags, &hFile))
+    HANDLE hFile = NULL;
+    if (!SFileCreateFile(hMpq, internalPath.string().c_str(), 0, fileSize, 0, createFileFlags, &hFile))
     {
         logger.PrintError("Failed to create file");
         exit(0);
@@ -122,13 +143,13 @@ auto GetMpqPath()
 
 auto GetFileList(std::string_view directoryPath)
 {
-    std::vector<std::pair<std::string /*realPath*/, std::string /*internalPath*/>> files;
+    std::vector<std::pair<std::filesystem::path /*realPath*/, std::filesystem::path /*internalPath*/>> files;
     for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))  // TODO: Crashes if given wrong dir?
     {
         if (entry.is_regular_file())
         {
-            auto actualPath = entry.path().string();
-            auto internalPath = actualPath.substr(directoryPath.length()); // Exclude directoryPath from the file path
+            auto actualPath = entry.path();
+            auto internalPath = actualPath.string().substr(directoryPath.length()); // Exclude directoryPath from the file path
             if (!internalPath.empty() && (internalPath[0] == '/' || internalPath[0] == '\\'))
                 internalPath.erase(0, 1); // Remove the first character
 
@@ -156,7 +177,7 @@ int main(int argc, char* argv[])
 
     auto mpqFullPath = GetMpqPath();
     TLogHelper logger("Assemble", mpqFullPath.c_str());
-    HANDLE hMpq = NULL;
+    HANDLE hMpq = nullptr;
     DWORD dwFileCount = 0;
 
     auto fileList = GetFileList(directoryPath.c_str());
@@ -168,7 +189,7 @@ int main(int argc, char* argv[])
     }
 
     for (auto file : fileList)
-        AddFileToMPQ(hMpq, logger, file.first.c_str(), file.second.c_str());
+        AddFileToMPQ(hMpq, logger, file.first, file.second);
 
     SFileCloseArchive(hMpq);
 
