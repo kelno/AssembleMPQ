@@ -17,6 +17,7 @@ local.properties
 .classpath
 .settings/
 .loadpath
+Assemble.exe
 
 # External tool builders
 .externalToolBuilders/
