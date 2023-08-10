@@ -171,7 +171,7 @@ int main(int argc, char* argv[])
     static bool BUILD_LIST_FILE = false; // We made a fix in SFileCreateArchive to actually remove MPQ_CREATE_LISTFILE 
 
     // V4 seems to be supported by wow 335. 
-    auto createFlags = MPQ_CREATE_ARCHIVE_V4; 
+    auto createFlags = MPQ_CREATE_ARCHIVE_V2; 
     if (BUILD_LIST_FILE)
         createFlags |= (MPQ_CREATE_LISTFILE | MPQ_CREATE_ATTRIBUTES);
 
