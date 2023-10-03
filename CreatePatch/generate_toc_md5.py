@@ -1,7 +1,7 @@
 # This script will generate the first 16 bits of a .SIG file used to validate wow interface (addons & frameXML).
 # The .SIG file needs to exists already in the same directory as the toc file.
 # This is not enough to make a working .SIG file accepted by the 335 client, there is also another SHA1 check validating the .SIG file itself.
-# Usage: generate_md5.py <path_to_toc_file>
+# Usage: generate_toc_md5.py <path_to_toc_file>
 
 import hashlib
 import os

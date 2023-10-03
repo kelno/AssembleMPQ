@@ -80,7 +80,6 @@ auto GetCompressionFlags(std::filesystem::path const& filePath)
     else
         writeFileFlags = MPQ_COMPRESSION_ZLIB;
 
-
     return writeFileFlags;
 }
 

@@ -38,7 +38,7 @@ def download_json(url, target_path):
 def process_toc_file(file_path):
     print("Processing .toc file:", os.path.basename(file_path))
     success = generate_toc_md5.process_file(file_path)
-    
+
     if success != True:
         print(f"Error: Generate md5 script returned an error. Stopping.")
         press_any_key_exit()
@@ -128,8 +128,8 @@ def on_drop(event):
         if os.path.exists(ENDLESS_DLL_NAME):
             shutil.copy(ENDLESS_DLL_NAME, mockpatch_path)
         else:
-            print(f"You can place Endless.dll next to this script if you want it moved automatically to {MOCKPATCH_DIR} and have its md5 generated")
-            
+            print(f"(Optional) You can place Endless.dll next to this script if you want it moved automatically to {MOCKPATCH_DIR} and have its md5 generated")
+
         generate_json_patchlist.list_files_and_generate_json(mockpatch_path)
         print("You need to edit the JSON yourself!")
         end_section()
