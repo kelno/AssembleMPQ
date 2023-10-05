@@ -73,9 +73,8 @@ auto GetCompressionFlags(std::filesystem::path const& filePath)
         return std::tolower(c);
     });
 
-    if (extension == ".wav")
-        writeFileFlags = MPQ_COMPRESSION_HUFFMANN;
-    else if (extension == ".mp3" || extension == ".mpq")
+    // MPQ_COMPRESSION_HUFFMANN doesn't seem to work on LK client at least
+    if (extension == ".mp3" || extension == ".mpq")
         writeFileFlags = 0; // no compression
     else
         writeFileFlags = MPQ_COMPRESSION_ZLIB;
