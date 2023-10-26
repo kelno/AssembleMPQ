@@ -18,7 +18,7 @@ import generate_toc_md5
 ASSEMBLE_EXE = "Assemble.exe"
 JSON_URL = "https://download.endless.gg/patch/info.json"
 MOCKPATCH_DIR = "MockPatch"
-MPQ_FILE_NAME = "Patch-X.MPQ"
+MPQ_FILE_NAME = "patch-endless-X.MPQ"
 ENDLESS_DLL_NAME = "Endless.dll"
 
 def press_any_key_exit():
