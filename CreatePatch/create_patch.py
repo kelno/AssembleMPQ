@@ -11,6 +11,7 @@ import subprocess
 import zipfile
 import requests
 from datetime import datetime
+import sys
 
 import generate_json_patchlist
 import generate_toc_md5
@@ -133,6 +134,8 @@ def on_drop(event):
         generate_json_patchlist.list_files_and_generate_json(mockpatch_path)
         print("You need to edit the JSON yourself!")
         end_section()
+        
+        sys.exit()
         
     else:
         print("Not a directory")

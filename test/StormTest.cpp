@@ -106,7 +106,7 @@ void AddFileToMPQ(auto hMpq, auto& logger, std::filesystem::path const& filePath
     auto writeFileFlags = GetCompressionFlags(internalPath);
 
     HANDLE hFile = NULL;
-    if (!SFileCreateFile(hMpq, internalPath.string().c_str(), 0, fileSize, 0, createFileFlags, &hFile))
+    if (!SFileCreateFile(hMpq, internalPath.string().c_str(), 0, DWORD(fileSize), 0, createFileFlags, &hFile))
     {
         logger.PrintError("Failed to create file");
         exit(0);
@@ -115,16 +115,15 @@ void AddFileToMPQ(auto hMpq, auto& logger, std::filesystem::path const& filePath
     std::vector<char> buffer(fileSize);
     inputFile.read(buffer.data(), fileSize);
 
-    if (!SFileWriteFile(hFile, buffer.data(), fileSize, writeFileFlags))
+    if (!SFileWriteFile(hFile, buffer.data(), DWORD(fileSize), writeFileFlags))
     {
         logger.PrintError("Failed to write file");
         exit(0);
     }
 }
 
-auto GetMpqPath()
+auto GetMpqPath(std::string const& mpqFileName)
 {
-    auto mpqFileName = "Patch-X.MPQ";
     DeleteMPQFileIfExists(mpqFileName);
 
     std::filesystem::path currentPath = std::filesystem::current_path();
@@ -142,7 +141,15 @@ auto GetMpqPath()
 auto GetFileList(std::string_view directoryPath)
 {
     std::vector<std::pair<std::filesystem::path /*realPath*/, std::filesystem::path /*internalPath*/>> files;
-    for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath))  // TODO: Crashes if given wrong dir?
+    
+    // Check if the directory exists
+    if (!std::filesystem::exists(directoryPath)) {
+        // Handle the case where the directory doesn't exist
+        return files;
+    }
+
+
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(directoryPath)) 
     {
         if (entry.is_regular_file())
         {
@@ -161,29 +168,61 @@ auto GetFileList(std::string_view directoryPath)
 int main(int argc, char* argv[])
 {
     std::string directoryPath;
+    std::string mpqFileName = "Patch-X.MPQ";
+    bool buildListFile = false; // We made a fix in SFileCreateArchive to actually remove MPQ_CREATE_LISTFILE if specified
+
+    // Help text for command line syntax
+    std::string helpText = "Usage: program_name [--listfile] directory_path [mpq_file_name] \n"
+                           "Arguments:\n"
+                           "  --listfile         : (Optional) Use a listfile for specific behavior\n"
+                           "  --help             : (Optional) Print this help text\n"
+                           "  directory_path     : Path to the directory\n"
+                           "  mpq_file_name      : (Optional) Name of the MPQ file (default: Patch-X.MPQ)\n";
+
+    // Check if --listfile argument is present and set the flag
+    if (argc > 1 && std::string(argv[1]) == "--listfile") {
+        buildListFile = true;
+        argc--;
+        argv++;
+    }
+    
+    // If help flag is present or no arguments provided, display help text
+    if (argc == 1 || (argc == 2 && std::string(argv[1]) == "--help")) {
+        std::cout << helpText << std::endl;
+        return 0;
+    }
+
     if (argc > 1)
         directoryPath = argv[1];
-    else
+    else 
+    {
+        std::cout << helpText << std::endl;
         return 1;
+    }
 
-    static bool BUILD_LIST_FILE = false; // We made a fix in SFileCreateArchive to actually remove MPQ_CREATE_LISTFILE 
+    if (argc > 2)
+        mpqFileName = argv[2];
 
     // V4 seems to be supported by wow 335. 
     auto createFlags = MPQ_CREATE_ARCHIVE_V2; 
-    if (BUILD_LIST_FILE)
+    if (buildListFile)
         createFlags |= (MPQ_CREATE_LISTFILE | MPQ_CREATE_ATTRIBUTES);
 
-    auto mpqFullPath = GetMpqPath();
+    auto mpqFullPath = GetMpqPath(mpqFileName);
     TLogHelper logger("Assemble", mpqFullPath.c_str());
     HANDLE hMpq = nullptr;
-    DWORD dwFileCount = 0;
 
     auto fileList = GetFileList(directoryPath.c_str());
+    if (fileList.empty())
+    {
+        logger.PrintError((std::string("Failed to open directory ") + directoryPath).c_str());
+        exit(1);
+    }
 
-    if (!SFileCreateArchive(mpqFullPath.c_str(), createFlags, fileList.size(), &hMpq))
+    if (!SFileCreateArchive(mpqFullPath.c_str(), createFlags, DWORD(fileList.size()), &hMpq))
     {
         logger.PrintError("Failed to create archive");
-        exit(0);
+        exit(1);
     }
 
     for (auto file : fileList)
