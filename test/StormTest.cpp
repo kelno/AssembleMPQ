@@ -226,7 +226,7 @@ int main(int argc, char* argv[])
     }
 
     for (auto file : fileList)
-        AddFileToMPQ(hMpq, logger, file.first, file.second);
+        AddFileToMPQ(hMpq, logger, file.first, file.second, false); // getting file corrupted if patch is true
 
     SFileCloseArchive(hMpq);
 
