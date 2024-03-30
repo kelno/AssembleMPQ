@@ -103,7 +103,7 @@ def on_drop(event):
         
         start_section()
         print("Assembling MPQ...")
-        result = subprocess.run([ASSEMBLE_EXE, new_directory], shell=True)
+        result = subprocess.run([ASSEMBLE_EXE, "--nolistfile", new_directory], shell=True)
         if result.returncode != 0:
             print(f"Error: {ASSEMBLE_EXE} returned a non-zero exit code.")
             press_any_key_exit()
