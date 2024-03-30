@@ -204,14 +204,23 @@ int main(int argc, char* argv[])
     bool buildListFile = true;
 
     // Help text for command line syntax
-    std::string helpText = "Usage: program_name [--nolistfile] directory_path [mpq_file_name] \n"
+    std::string helpText = "AssembleMPQ 1.1 \n"
+                           "Usage: program_name [--nolistfile] directory_path [mpq_file_name] \n"
                            "Arguments:\n"
-                           "  --nolistfile       : (Optional) Use a listfile for specific behavior\n"
+                           "  --nolistfile       : (Optional) Prevent generating listfile\n"
                            "  --help             : (Optional) Print this help text\n"
                            "  directory_path     : Path to the directory\n"
                            "  mpq_file_name      : (Optional) Name of the MPQ file (default: Patch-X.MPQ)\n";
 
-    // Check if --listfile argument is present and set the flag
+
+    // If help flag is present or no arguments provided, display help text
+    if (argc == 1 || (argc >= 2 && std::string(argv[1]) == "--help"))
+    {
+        logger.PrintMessage(helpText.c_str());
+        return 0;
+    }
+
+    // Check if --nolistfile argument is present and set the flag
     if (argc > 1)
     {
         if (std::string(argv[1]) == "--nolistfile") 
@@ -227,14 +236,6 @@ int main(int argc, char* argv[])
             return 1;
         }
     }
-    
-    // If help flag is present or no arguments provided, display help text
-    if (argc == 1 || (argc >= 2 && std::string(argv[1]) == "--help")) 
-    {
-        logger.PrintMessage(helpText.c_str());
-        return 0;
-    }
-
     if (argc > 1)
         directoryPath = argv[1];
     else 
