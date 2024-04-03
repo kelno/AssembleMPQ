@@ -1,6 +1,16 @@
 # Assemble MPQ
 
-Forked from https://github.com/ladislav-zezula/StormLib/  
+Simple CLI tool to create an MPQ file from of a directory.  
+
+
+https://github.com/kelno/AssembleMPQ/assets/3866946/df89bddb-615d-4f81-860c-62eb7ea3ccbb
+
+
+https://github.com/kelno/AssembleMPQ/assets/3866946/8e72dd16-da5c-4f55-b9f1-7410feeddfdd
+
+
+Quick and dirty fork from https://github.com/ladislav-zezula/StormLib/  
+
 
 ## How to use
 
@@ -9,7 +19,7 @@ Build in release, get the built Assemble.exe in `\bin\Assemble\x64\Release`
 
 
 ```bash
-Usage: program_name [--nolistfile] directory_path [mpq_file_name]
+Usage: Assemble.exe [--nolistfile] directory_path [mpq_file_name]
 Arguments:
   --nolistfile       : (Optional) Prevent generating listfile
   --help             : (Optional) Print this help text
