@@ -13,10 +13,12 @@ Quick and dirty fork from https://github.com/ladislav-zezula/StormLib/
 
 
 ## How to use
+### Building  
 
+You can either use the provided StormLib.sln (recommanded), or build with CMake.  
 Build in release, get the built Assemble.exe in `\bin\Assemble\x64\Release`
 
-
+### Usage
 
 ```bash
 Usage: Assemble.exe [--nolistfile] directory_path [mpq_file_name]
