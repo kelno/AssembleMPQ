@@ -1,5 +1,5 @@
-project(StormLib)
 cmake_minimum_required(VERSION 3.10)
+project(StormLib)
 
 set(LIBRARY_NAME storm)
 set(CMAKE_CXX_STANDARD 11)
@@ -8,15 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(CMakeDependentOption)
 
-option(BUILD_SHARED_LIBS "Compile shared libraries" OFF)
 option(STORM_SKIP_INSTALL "Skip installing files" OFF)
 option(STORM_USE_BUNDLED_LIBRARIES
     "Force use of bundled dependencies instead of system libraries."
     OFF
-)
-option(STORM_BUILD_TESTS
-    "Compile StormLib test application" OFF
-#   "BUILD_TESTING" OFF # Stay coherent with CTest variables
 )
 
 set(SRC_FILES
@@ -58,6 +53,7 @@ if(MSVC)
     set(STORM_DEF_FILES
            src/DllMain.def
     )
+    add_definitions(-D_UNICODE)
 endif()
 
 set(TOMCRYPT_FILES
@@ -283,7 +279,7 @@ set(ZLIB_FILES
 )
 
 set(TEST_SRC_FILES
-           test/StormTest.cpp
+           test/Assemble.cpp
 )
 
 add_definitions(-D_7ZIP_ST -DBZ_STRICT_ANSI)
@@ -336,24 +332,8 @@ target_link_libraries(${LIBRARY_NAME} ${LINK_LIBS})
 target_compile_definitions(${LIBRARY_NAME} INTERFACE STORMLIB_NO_AUTO_LINK) #CMake will take care of the linking
 target_include_directories(${LIBRARY_NAME} PUBLIC src/)
 set_target_properties(${LIBRARY_NAME} PROPERTIES PUBLIC_HEADER "src/StormLib.h;src/StormPort.h")
-if(BUILD_SHARED_LIBS)
-    message(STATUS "Linking against dependent libraries dynamically")
 
-    if(APPLE)
-        set_target_properties(${LIBRARY_NAME} PROPERTIES FRAMEWORK true)
-        set_target_properties(${LIBRARY_NAME} PROPERTIES LINK_FLAGS "-framework Carbon")
-    endif()
-    if(UNIX)
-        SET(VERSION_MAJOR "9")
-        SET(VERSION_MINOR "22")
-        SET(VERSION_PATCH "0")
-        SET(VERSION_STRING "${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}")
-        set_target_properties(${LIBRARY_NAME} PROPERTIES VERSION "${VERSION_STRING}")
-        set_target_properties(${LIBRARY_NAME} PROPERTIES SOVERSION "${VERSION_MAJOR}")
-    endif()
-else()
-    message(STATUS "Linking against dependent libraries statically")
-endif()
+message(STATUS "Linking against dependent libraries statically")
 
 if (NOT STORM_SKIP_INSTALL)
     install(TARGETS ${LIBRARY_NAME}
@@ -392,10 +372,7 @@ if (NOT STORM_SKIP_INSTALL)
         INCLUDE(CPack)
 endif()
 
-if(STORM_BUILD_TESTS)
-    add_executable(AssembleMPQ ${TEST_SRC_FILES})
-    target_link_libraries(AssembleMPQ ${LIBRARY_NAME})
-    install(TARGETS AssembleMPQ RUNTIME DESTINATION bin)
-    target_compile_features(AssembleMPQ PRIVATE cxx_std_20)
-endif()
-
+add_executable(AssembleMPQ ${TEST_SRC_FILES})
+target_link_libraries(AssembleMPQ ${LIBRARY_NAME})
+install(TARGETS AssembleMPQ RUNTIME DESTINATION bin)
+target_compile_features(AssembleMPQ PRIVATE cxx_std_20)
