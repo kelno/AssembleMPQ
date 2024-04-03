@@ -133,7 +133,7 @@
     <ClCompile Include="src\SFileVerify.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test\StormTest.cpp">
+    <ClCompile Include="test\Assemble.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\adpcm\adpcm.cpp">

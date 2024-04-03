@@ -348,7 +348,7 @@
     <ClCompile Include="src\zlib\inftrees.c" />
     <ClCompile Include="src\zlib\trees.c" />
     <ClCompile Include="src\zlib\zutil.c" />
-    <ClCompile Include="test\StormTest.cpp">
+    <ClCompile Include="test\Assemble.cpp">
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Level4</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Level4</WarningLevel>
       <WarningLevel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Level4</WarningLevel>
