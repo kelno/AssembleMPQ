@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
     bool buildListFile = true;
 
     // Help text for command line syntax
-    std::string helpText = "AssembleMPQ 1.1 \n"
+    std::string helpText = "AssembleMPQ 1.01 \n"
                            "Usage: program_name [--nolistfile] directory_path [mpq_file_name] \n"
                            "Arguments:\n"
                            "  --nolistfile       : (Optional) Prevent generating listfile\n"
